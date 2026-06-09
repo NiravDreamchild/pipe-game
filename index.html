@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Connect the Pipe — Koydaa Gammat</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;600;700&family=Noto+Sans+Gujarati:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{width:100%;font-family:'Roboto',sans-serif;background:#f8f5ff;color:#000;overflow-x:hidden;}
+.container{width:100%;max-width:520px;margin:0 auto;padding:14px 12px 32px;}
+
+.header{text-align:center;margin-bottom:14px;padding-bottom:12px;border-bottom:1.5px solid #E2E3E4;background:#fff;border-radius:14px;padding:14px;margin-bottom:12px;}
+.brand{font-size:10px;color:#C2C2C2;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:3px;}
+h1{font-size:22px;font-weight:700;color:#752886;margin-bottom:2px;}
+.sub{font-size:12px;color:#444;}
+
+.tabs{display:flex;gap:5px;margin-bottom:10px;}
+.tab{font-family:'Roboto',sans-serif;font-size:12px;background:#fff;border:1.5px solid #E2E3E4;border-radius:8px;padding:6px 4px;color:#444;cursor:pointer;flex:1;text-align:center;min-height:34px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1px;-webkit-appearance:none;transition:all 0.15s;}
+.tab:active{transform:scale(0.95);}
+.tab.active{background:#752886;border-color:#752886;color:#fff;font-weight:700;}
+.tab.done{background:#EDD1FF;border-color:#9c27b0;color:#5c1f6e;}
+.tab .tlv{font-size:13px;font-weight:700;}
+.tab .tdif{font-size:9px;opacity:0.75;letter-spacing:0.3px;}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:10px;}
+.stat{background:#fff;border:1px solid #E2E3E4;border-radius:8px;padding:6px 4px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.04);}
+.stat .lbl{font-size:9px;color:#C2C2C2;text-transform:uppercase;letter-spacing:0.5px;}
+.stat .val{font-size:16px;font-weight:700;color:#752886;line-height:1.2;}
+
+.progress-wrap{height:5px;background:#E2E3E4;border-radius:10px;margin-bottom:10px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,#752886,#F9A824);border-radius:10px;transition:width 0.5s;}
+
+/* GAME CARD */
+.game-card{background:#fff;border:1.5px solid #E2E3E4;border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(117,40,134,0.08);}
+.card-hdr{background:linear-gradient(135deg,#752886,#9c27b0);padding:11px 16px;display:flex;justify-content:space-between;align-items:center;}
+.card-hdr h2{font-size:15px;font-weight:700;color:#fff;}
+.diff-badge{font-size:10px;font-weight:700;border-radius:12px;padding:3px 10px;letter-spacing:0.5px;}
+.easy-b{background:#D8F5E0;color:#1b5e20;}
+.med-b{background:#FDE9C9;color:#a06000;}
+.hard-b{background:#FFEDEC;color:#b71c1c;}
+.card-body{padding:14px;}
+
+/* GRID */
+.grid-outer{display:flex;justify-content:center;margin-bottom:12px;}
+.pipe-grid{display:grid;background:#dee0e6;gap:2px;padding:2px;border-radius:10px;border:2px solid #dee0e6;}
+
+/* CELLS */
+.pipe-cell{
+  position:relative;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:5px;overflow:hidden;
+  background:#fff;
+  transition:background 0.12s;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:none;
+}
+.pipe-cell.empty{cursor:default;background:#f0f2f5;}
+.pipe-cell.fixed-cell{cursor:default;}
+.pipe-cell:active:not(.empty):not(.fixed-cell){background:#f3e8ff;transform:scale(0.92);}
+.pipe-cell.flash{animation:cellFlash 0.25s ease;}
+@keyframes cellFlash{0%{transform:scale(1)}40%{transform:scale(0.88)}70%{transform:scale(1.06)}100%{transform:scale(1)}}
+
+/* SVG inside cell */
+.pipe-cell svg{display:block;transition:transform 0.18s cubic-bezier(0.34,1.56,0.64,1);}
+
+/* WIN BANNER */
+.win-banner{
+  display:none;margin:0 0 12px;
+  background:linear-gradient(135deg,#e8f5e9,#EDD1FF);
+  border:1.5px solid #752886;border-radius:12px;
+  padding:14px 16px;text-align:center;
+  animation:bannerIn 0.4s ease;
+}
+.win-banner.show{display:block;}
+@keyframes bannerIn{0%{transform:scale(0.85);opacity:0}100%{transform:scale(1);opacity:1}}
+.win-banner .emoji{font-size:36px;display:block;margin-bottom:4px;}
+.win-banner .wtitle{font-size:16px;font-weight:700;color:#752886;}
+.win-banner .wsub{font-size:12px;color:#444;margin-top:2px;}
+
+/* FEEDBACK */
+.feedback{min-height:34px;display:flex;align-items:center;justify-content:center;border-radius:8px;padding:6px 12px;margin-bottom:8px;font-size:12px;opacity:0;transition:opacity 0.2s;text-align:center;}
+.feedback.show{opacity:1;}
+.feedback.ok{background:#D8F5E0;color:#1b5e20;border:1px solid #c8e6c9;}
+.feedback.hint-fb{background:#FDE9C9;color:#a06000;border:1px solid #ffe0b2;}
+.feedback.bad{background:#FFEDEC;color:#b71c1c;border:1px solid #ffcdd2;}
+
+/* BUTTONS */
+.btns{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;}
+.btn{font-family:'Roboto',sans-serif;font-size:12px;border-radius:8px;padding:9px 14px;cursor:pointer;transition:all 0.15s;border:1.5px solid #E2E3E4;min-height:38px;-webkit-appearance:none;font-weight:500;}
+.btn:active{transform:scale(0.96);}
+.btn-reset{background:#fff;color:#555;}
+.btn-hint{background:#fff8e1;border-color:#F9A824;color:#a06000;}
+.btn-solve{background:#EDD1FF;border-color:#9c27b0;color:#5c1f6e;}
+.btn-next{background:linear-gradient(135deg,#F9A824,#f57c00);border-color:#f57c00;color:#fff;font-weight:700;display:none;}
+
+.instruction{text-align:center;font-size:11px;color:#C2C2C2;margin-top:8px;line-height:1.6;font-family:'Noto Sans Gujarati','Roboto',sans-serif;}
+.footer{text-align:center;margin-top:20px;padding-top:12px;border-top:1px solid #E2E3E4;font-size:11px;color:#C2C2C2;}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+  <div class="brand">Dreamchild Garbhsanskar — Koydaa Gammat</div>
+  <h1>🔧 Connect the Pipe</h1>
+  <div class="sub">ટાઇલ ટૅપ કરો, ૯૦° ફેરવો, બધા પાઇપ જોડો!</div>
+</div>
+
+<div class="tabs" id="tabs"></div>
+<div class="progress-wrap"><div class="progress-fill" id="pf" style="width:0%"></div></div>
+<div class="stats">
+  <div class="stat"><div class="lbl">Score</div><div class="val" id="sc">0</div></div>
+  <div class="stat"><div class="lbl">Level</div><div class="val" id="qn">1/6</div></div>
+  <div class="stat"><div class="lbl">Moves</div><div class="val" id="mv">0</div></div>
+  <div class="stat"><div class="lbl">Streak</div><div class="val" id="stk">0</div></div>
+</div>
+
+<div class="win-banner" id="winBanner">
+  <span class="emoji">🎉</span>
+  <div class="wtitle">પાઇપ જોડાઈ ગઈ!</div>
+  <div class="wsub" id="winSub"></div>
+</div>
+
+<div class="game-card" id="gameCard">
+  <div class="card-hdr" id="cardHdr">
+    <h2 id="lvTitle">Level 1 — 4×4</h2>
+    <span class="diff-badge easy-b" id="diffBadge">Easy</span>
+  </div>
+  <div class="card-body">
+    <div class="grid-outer"><div class="pipe-grid" id="pipeGrid"></div></div>
+    <div class="feedback" id="fb"></div>
+    <div class="btns">
+      <button class="btn btn-reset" onclick="resetLevel()">↺ ફરી</button>
+      <button class="btn btn-hint" onclick="doHint()">💡 Hint</button>
+      <button class="btn btn-solve" onclick="doSolve()">✓ Solve</button>
+      <button class="btn btn-next" id="nxtBtn" onclick="nextLevel()">આગળ →</button>
+    </div>
+    <div class="instruction" id="instr">ટૅપ = ૯૦° ઘડિયાળ દિશામાં ફેરવો • સ્ત્રોત(●) થી અંત(◎) સુધી જોડો</div>
+  </div>
+</div>
+
+<div class="footer">©Dreamchild Garbhsanskar — Connect the Pipe Series</div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════
+   CORE ENGINE
+   Directions: 0=N 1=E 2=S 3=W
+   ══════════════════════════════════════════ */
+const DR=[-1,0,1,0], DC=[0,1,0,-1];
+const opp=d=>(d+2)%4;
+const DIR_NAME=['N','E','S','W'];
+
+const ROTS={
+  'I':  [[0,2],[1,3]],
+  'L':  [[0,1],[1,2],[2,3],[3,0]],
+  'T':  [[0,1,2],[1,2,3],[2,3,0],[3,0,1]],
+  'X':  [[0,1,2,3]],
+  'CAP':[[0],[1],[2],[3]],
+  '.':  [[]]
+};
+const gc=(t,r)=>t==='.'?[]:ROTS[t][r%ROTS[t].length];
+
+/* colours: 0=empty 1=blue 2=orange 3=green 4=red */
+const PC=['#bdbdbd','#1e88e5','#ef6c00','#2e7d32','#c62828','#6a1b9a'];  // pipe colours (disconnected)
+const PA=['#bdbdbd','#42a5f5','#ffa726','#66bb6a','#ef5350','#ab47bc'];  // connected (lit)
+const BG=['#f0f2f5','#e3f2fd','#fff8e1','#e8f5e9','#ffebee','#f3e5f5']; // cell bg
+
+/* ══════════════════════════════════════════
+   VERIFIED LEVEL DATA
+   Each cell: {t,r,src?,snk?,col,fixed?}
+   ══════════════════════════════════════════ */
+function C(t,r,src,snk,col,fixed){
+  return {t,r,src:!!src,snk:!!snk,col:col||0,fixed:!!(fixed||src||snk||t==='.')};
+}
+const _=()=>C('.',0,0,0,0);
+
+const SOLVED_GRIDS=[
+/* L1 4x4 */
+()=>[[C('CAP',1,1,0,1),C('I',1,0,0,1),C('L',2,0,0,1),_()],
+     [C('CAP',2,0,1,1),_(),            C('I',0,0,0,1),_()],
+     [C('L',0,0,0,1),  C('I',1,0,0,1),C('L',3,0,0,1),_()],
+     [_(),_(),_(),_()]],
+/* L2 5x5 */
+()=>[[C('CAP',1,1,0,1),C('I',1,0,0,1),C('L',2,0,0,1),_(),_()],
+     [_(),_(),           C('I',0,0,0,1),_(),_()],
+     [_(),_(),           C('L',0,0,0,1),C('I',1,0,0,1),C('L',2,0,0,1)],
+     [_(),_(),_(),_(),  C('I',0,0,0,1)],
+     [_(),_(),_(),_(),  C('CAP',0,0,1,1)]],
+/* L3 5x5 two straight */
+()=>[[C('CAP',1,1,0,1),C('I',1,0,0,1),C('I',1,0,0,1),C('I',1,0,0,1),C('CAP',3,0,1,1)],
+     [_(),_(),_(),_(),_()],
+     [_(),_(),_(),_(),_()],
+     [_(),_(),_(),_(),_()],
+     [C('CAP',1,1,0,2),C('I',1,0,0,2),C('I',1,0,0,2),C('I',1,0,0,2),C('CAP',3,0,1,2)]],
+/* L4 5x5 winding */
+()=>[[C('CAP',2,1,0,1),_(),_(),_(),_()],
+     [C('I',0,0,0,1),_(),_(),_(),_()],
+     [C('L',0,0,0,1),C('I',1,0,0,1),C('I',1,0,0,1),C('I',1,0,0,1),C('L',2,0,0,1)],
+     [_(),_(),_(),_(),C('I',0,0,0,1)],
+     [_(),_(),C('CAP',1,0,1,1),C('I',1,0,0,1),C('L',3,0,0,1)]],
+/* L5 5x5 two paths */
+()=>[[C('CAP',1,1,0,1),C('I',1,0,0,1),C('I',1,0,0,1),C('I',1,0,0,1),C('CAP',3,0,1,1)],
+     [_(),_(),_(),_(),_()],
+     [_(),_(),_(),_(),_()],
+     [C('L',1,0,0,2),C('I',1,0,0,2),C('I',1,0,0,2),C('I',1,0,0,2),C('L',2,0,0,2)],
+     [C('CAP',0,1,0,2),_(),_(),_(),C('CAP',0,0,1,2)]],
+/* L6 6x6 T-junction */
+()=>[[C('CAP',1,1,0,1),C('I',1,0,0,1),C('T',1,0,0,1),C('I',1,0,0,1),C('L',2,0,0,1),_()],
+     [_(),_(),C('I',0,0,0,1),_(),C('I',0,0,0,1),_()],
+     [_(),_(),C('I',0,0,0,1),_(),C('CAP',0,0,1,1),_()],
+     [_(),_(),C('I',0,0,0,1),_(),_(),_()],
+     [_(),_(),C('CAP',0,0,1,1),_(),_(),_()],
+     [C('CAP',1,1,0,2),C('I',1,0,0,2),C('I',1,0,0,2),C('I',1,0,0,2),C('I',1,0,0,2),C('CAP',3,0,1,2)]]
+];
+
+const LEVELS=[
+  {name:'Level 1',size:'4×4',diff:'Easy',  dc:'easy-b', rows:4,cols:4},
+  {name:'Level 2',size:'5×5',diff:'Easy',  dc:'easy-b', rows:5,cols:5},
+  {name:'Level 3',size:'5×5',diff:'Medium',dc:'med-b',  rows:5,cols:5},
+  {name:'Level 4',size:'5×5',diff:'Medium',dc:'med-b',  rows:5,cols:5},
+  {name:'Level 5',size:'5×5',diff:'Hard',  dc:'hard-b', rows:5,cols:5},
+  {name:'Level 6',size:'6×6',diff:'Hard',  dc:'hard-b', rows:6,cols:6},
+];
+
+/* ═══════════════ STATE ═══════════════ */
+let cur=0,score=0,moves=0,streak=0;
+let grid=[], solvedGrid=[];
+let levelDone=new Array(6).fill(false);
+let isWon=false;
+
+/* deep clone grid */
+function cloneG(g){return g.map(r=>r.map(c=>({...c})));}
+
+/* shuffle: rotate non-fixed cells randomly */
+function shuffle(g,rows,cols){
+  const ng=cloneG(g);
+  for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
+    const cell=ng[r][c];
+    if(cell.fixed||cell.t==='.') continue;
+    const nRots=ROTS[cell.t].length;
+    const extra=1+Math.floor(Math.random()*(nRots===1?1:nRots-1));
+    cell.r=(cell.r+extra)%nRots;
+  }
+  return ng;
+}
+
+/* ═══════════════ CONNECTIVITY ═══════════════ */
+function analyse(g,rows,cols){
+  /* For each cell decide if all its connections are satisfied */
+  const happy=Array.from({length:rows},()=>new Array(cols).fill(false));
+  for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
+    const cell=g[r][c]; if(cell.t==='.') continue;
+    const conns=gc(cell.t,cell.r);
+    let ok=true;
+    for(const d of conns){
+      const nr=r+DR[d],nc=c+DC[d];
+      if(nr<0||nr>=rows||nc<0||nc>=cols){ok=false;break;}
+      const nb=g[nr][nc];
+      if(nb.t==='.'||!gc(nb.t,nb.r).includes(opp(d))){ok=false;break;}
+    }
+    /* also check no neighbour forces a connection this cell ignores */
+    if(ok) for(let d=0;d<4;d++){
+      const nr=r+DR[d],nc=c+DC[d];
+      if(nr<0||nr>=rows||nc<0||nc>=cols) continue;
+      const nb=g[nr][nc]; if(nb.t==='.') continue;
+      if(gc(nb.t,nb.r).includes(opp(d))&&!conns.includes(d)){ok=false;break;}
+    }
+    happy[r][c]=ok;
+  }
+
+  /* BFS flow from each source */
+  const flow=Array.from({length:rows},()=>new Array(cols).fill(false));
+  for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
+    if(!g[r][c].src) continue;
+    const vis=new Set([`${r},${c}`]); const q=[{r,c}];
+    while(q.length){
+      const {r:cr,c:cc}=q.shift(); flow[cr][cc]=true;
+      for(const d of gc(g[cr][cc].t,g[cr][cc].r)){
+        const nr=cr+DR[d],nc=cc+DC[d];
+        if(nr<0||nr>=rows||nc<0||nc>=cols) continue;
+        if(vis.has(`${nr},${nc}`)) continue;
+        const nb=g[nr][nc];
+        if(gc(nb.t,nb.r).includes(opp(d))){vis.add(`${nr},${nc}`);q.push({r:nr,c:nc});}
+      }
+    }
+  }
+
+  /* win = all non-empty happy AND all sinks flow */
+  let win=true;
+  for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
+    if(g[r][c].t==='.') continue;
+    if(!happy[r][c]) win=false;
+    if(g[r][c].snk&&!flow[r][c]) win=false;
+  }
+  return {happy,flow,win};
+}
+
+/* ═══════════════ SVG DRAWING ═══════════════ */
+function cellSVG(cell,sz,happy,flowing){
+  const {t,r:rot,src,snk,col}=cell;
+  if(t==='.') return '';
+  const cx=sz/2,cy=sz/2,pw=Math.max(6,sz*0.22),er=sz*0.52;
+  const lit=happy&&flowing;
+  const pipeC=lit?PA[col||1]:PC[col||0];
+  const bgC=lit?BG[col||1]:'#fff';
+
+  let s=`<svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}" style="background:${bgC}">`;
+  /* pipe arms */
+  for(const d of gc(t,rot)){
+    const ex=cx+DC[d]*er,ey=cy+DR[d]*er;
+    s+=`<line x1="${cx}" y1="${cy}" x2="${ex}" y2="${ey}" stroke="${pipeC}" stroke-width="${pw}" stroke-linecap="round"/>`;
+  }
+  /* centre joint */
+  s+=`<circle cx="${cx}" cy="${cy}" r="${pw*0.6}" fill="${pipeC}"/>`;
+  /* source dot */
+  if(src){
+    const sc=PA[col||1];
+    s+=`<circle cx="${cx}" cy="${cy}" r="${sz*0.28}" fill="${sc}" opacity="0.2"/>`;
+    s+=`<circle cx="${cx}" cy="${cy}" r="${sz*0.2}" fill="${sc}"/>`;
+    s+=`<circle cx="${cx}" cy="${cy}" r="${sz*0.09}" fill="#fff"/>`;
+  }
+  /* sink target */
+  if(snk){
+    const sc=lit?PA[col||1]:PC[col||0];
+    s+=`<circle cx="${cx}" cy="${cy}" r="${sz*0.26}" fill="none" stroke="${sc}" stroke-width="2.5"/>`;
+    s+=`<circle cx="${cx}" cy="${cy}" r="${sz*0.13}" fill="${sc}" opacity="${lit?1:0.5}"/>`;
+    if(lit) s+=`<circle cx="${cx}" cy="${cy}" r="${sz*0.055}" fill="#fff"/>`;
+  }
+  s+=`</svg>`;
+  return s;
+}
+
+/* ═══════════════ RENDER ═══════════════ */
+function buildGrid(){
+  const lv=LEVELS[cur];
+  const {rows,cols}=lv;
+  const {happy,flow}=analyse(grid,rows,cols);
+  const pipeGrid=document.getElementById('pipeGrid');
+  const cw=window.innerWidth,maxW=Math.min(cw-48,500);
+  const sz=Math.floor((maxW-cols*2-4)/cols);
+  pipeGrid.style.gridTemplateColumns=`repeat(${cols},${sz}px)`;
+  pipeGrid.innerHTML='';
+  for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
+    const cell=grid[r][c];
+    const hp=happy[r][c], fl=flow[r][c];
+    const div=document.createElement('div');
+    div.className='pipe-cell'+(cell.t==='.'?' empty':cell.fixed?' fixed-cell':'');
+    div.style.width=sz+'px'; div.style.height=sz+'px';
+    div.innerHTML=cellSVG(cell,sz,hp,fl);
+    if(!cell.fixed&&cell.t!=='.'){
+      div.addEventListener('touchend',e=>{e.preventDefault();tapCell(r,c,div);},{passive:false});
+      div.addEventListener('click',()=>tapCell(r,c,div));
+    }
+    pipeGrid.appendChild(div);
+  }
+}
+
+function tapCell(r,c,div){
+  if(isWon) return;
+  const cell=grid[r][c];
+  const nRots=ROTS[cell.t].length;
+  cell.r=(cell.r+1)%nRots;
+  moves++; document.getElementById('mv').textContent=moves;
+  div.classList.add('flash');
+  div.addEventListener('animationend',()=>div.classList.remove('flash'),{once:true});
+  const lv=LEVELS[cur];
+  const {happy,flow,win}=analyse(grid,lv.rows,lv.cols);
+  /* update all cells */
+  const cells=document.querySelectorAll('.pipe-grid .pipe-cell');
+  const sz=parseInt(cells[0].style.width);
+  for(let i=0;i<lv.rows*lv.cols;i++){
+    const gr=Math.floor(i/lv.cols), gc2=i%lv.cols;
+    const cell2=grid[gr][gc2];
+    if(cell2.t==='.') continue;
+    cells[i].innerHTML=cellSVG(cell2,sz,happy[gr][gc2],flow[gr][gc2]);
+    const wasLit=cells[i].classList.contains('lit');
+    const nowLit=happy[gr][gc2]&&flow[gr][gc2];
+    cells[i].classList.toggle('lit',nowLit);
+  }
+  if(win) onWin();
+}
+
+function onWin(){
+  isWon=true;
+  levelDone[cur]=true;
+  const pts=Math.max(10,60-moves+LEVELS.length-cur);
+  score+=pts; streak++;
+  document.getElementById('sc').textContent=score;
+  document.getElementById('stk').textContent=streak+(streak>1?'🔥':'');
+  document.getElementById('pf').style.width=(((cur+1)/LEVELS.length)*100)+'%';
+  buildTabs();
+  const wb=document.getElementById('winBanner');
+  document.getElementById('winSub').textContent=`${moves} ચાલ • +${pts} પોઇન્ટ • ${LEVELS[cur].diff}`;
+  wb.classList.add('show');
+  const nb=document.getElementById('nxtBtn');
+  nb.style.display='inline-block';
+}
+
+function loadLevel(idx){
+  cur=idx; moves=0; isWon=false;
+  document.getElementById('mv').textContent=0;
+  document.getElementById('qn').textContent=(idx+1)+'/6';
+  document.getElementById('winBanner').classList.remove('show');
+  document.getElementById('nxtBtn').style.display='none';
+  document.getElementById('fb').className='feedback';
+  const lv=LEVELS[idx];
+  document.getElementById('lvTitle').textContent=`${lv.name} — ${lv.size}`;
+  const db=document.getElementById('diffBadge');
+  db.textContent=lv.diff; db.className=`diff-badge ${lv.dc}`;
+  solvedGrid=SOLVED_GRIDS[idx]();
+  grid=shuffle(solvedGrid,lv.rows,lv.cols);
+  buildTabs();
+  buildGrid();
+}
+
+function resetLevel(){ loadLevel(cur); }
+
+function doHint(){
+  const lv=LEVELS[cur];
+  const {happy}=analyse(grid,lv.rows,lv.cols);
+  const cells=document.querySelectorAll('.pipe-grid .pipe-cell');
+  const sz=parseInt(cells[0].style.width);
+  for(let r=0;r<lv.rows;r++) for(let c=0;c<lv.cols;c++){
+    const cell=grid[r][c];
+    if(cell.fixed||cell.t==='.') continue;
+    if(!happy[r][c]){
+      const idx=r*lv.cols+c;
+      const el=cells[idx];
+      el.style.outline='3px solid #F9A824';
+      el.style.outlineOffset='-2px';
+      setTimeout(()=>{el.style.outline='';el.style.outlineOffset='';},2200);
+      const fb=document.getElementById('fb');
+      fb.className='feedback hint-fb show';
+      fb.textContent=`💡 Row ${r+1}, Col ${c+1} ટૅપ કરો!`;
+      setTimeout(()=>fb.className='feedback',2400);
+      return;
+    }
+  }
+  const fb=document.getElementById('fb');
+  fb.className='feedback ok show';
+  fb.textContent='✅ બધા ટાઇલ સ્થાને છે!';
+  setTimeout(()=>fb.className='feedback',1800);
+}
+
+function doSolve(){
+  const lv=LEVELS[cur];
+  for(let r=0;r<lv.rows;r++) for(let c=0;c<lv.cols;c++){
+    if(!grid[r][c].fixed&&grid[r][c].t!=='.') grid[r][c].r=solvedGrid[r][c].r;
+  }
+  buildGrid();
+  setTimeout(onWin,150);
+}
+
+function nextLevel(){
+  if(cur<5) loadLevel(cur+1);
+  else showFinal();
+}
+
+function buildTabs(){
+  const row=document.getElementById('tabs'); row.innerHTML='';
+  LEVELS.forEach((lv,i)=>{
+    const b=document.createElement('button');
+    b.className='tab'+(i===cur?' active':levelDone[i]?' done':'');
+    b.innerHTML=`<span class="tlv">${levelDone[i]?'✓':i+1}</span><span class="tdif">${lv.diff}</span>`;
+    b.onclick=()=>loadLevel(i);
+    row.appendChild(b);
+  });
+}
+
+function showFinal(){
+  document.getElementById('pf').style.width='100%';
+  document.getElementById('gameCard').innerHTML=`
+    <div class="card-hdr" style="background:linear-gradient(135deg,#1b5e20,#2e7d32);">
+      <h2 style="color:#fff;">બધા Level પૂર્ણ! 🎊</h2>
+    </div>
+    <div style="text-align:center;padding:32px 16px;">
+      <div style="font-size:52px;margin-bottom:10px;">🏆</div>
+      <div style="font-size:17px;font-weight:700;margin-bottom:6px;">અદ્ભુત! બધા પાઇપ જોડ્યા!</div>
+      <div style="font-size:34px;font-weight:700;color:#752886;margin:10px 0;">${score} pts</div>
+      <div style="font-size:12px;color:#C2C2C2;margin-bottom:24px;">તર્ક, ક્રમ, ધ્યાન — ગર્ભસ્થ બાળક માટે સ્ષ્ટ સ્ર.</div>
+      <button class="btn" style="background:#752886;border-color:#752886;color:#fff;font-weight:700;padding:12px 28px;" onclick="restartAll()">ફરી રમો</button>
+    </div>`;
+}
+function restartAll(){
+  score=0;moves=0;streak=0;cur=0;
+  levelDone=new Array(6).fill(false);
+  document.getElementById('sc').textContent=0;
+  document.getElementById('stk').textContent=0;
+  location.reload();
+}
+
+/* handle resize */
+window.addEventListener('resize',()=>{ if(!isWon) buildGrid(); });
+loadLevel(0);
+</script>
+</body>
+</html>
