@@ -24,58 +24,50 @@
     color:var(--body);
     display:flex; justify-content:center;
   }
-  .wrap{
-    width:100%; max-width:560px;
-    padding:12px 14px 22px; padding-top:12px;
-  }
+  .wrap{ width:100%; max-width:560px; padding:12px 14px 22px; }
   .card{
-    background:var(--card);
-    border-radius:14px;
-    border:1px solid var(--border);
-    padding:14px 14px 16px;
+    position:relative; overflow:hidden;
+    background:var(--card); border-radius:14px;
+    border:1px solid var(--border); padding:14px 14px 16px;
   }
 
-  /* 1. PROGRESS BAR */
-  .progress{
-    height:5px; background:var(--border);
-    border-radius:10px; overflow:hidden; margin-bottom:12px;
+  /* SOUND TOGGLE — top-right of game card */
+  .sound{
+    position:absolute; top:12px; right:12px;
+    width:32px; height:32px; border-radius:8px;
+    border:1.5px solid var(--border); background:#fff;
+    font-size:15px; line-height:1; cursor:pointer;
+    -webkit-appearance:none; display:flex; align-items:center; justify-content:center;
+    z-index:5; touch-action:manipulation;
   }
-  .progress > i{
-    display:block; height:100%; width:0%;
-    background:linear-gradient(90deg,#752886,#F9A824);
-    border-radius:10px; transition:width .5s;
+  .sound:active{ transform:scale(0.95); }
+
+  /* 1. PUZZLE TITLE */
+  .ptitle{
+    font-size:18px; font-weight:600; color:var(--primary);
+    text-align:center; margin:0 4px 4px; padding:0 30px;
+  }
+  .psub{
+    font-size:13px; color:#888; text-align:center;
+    margin:0 0 12px;
   }
 
   /* 2. TABS */
-  .tabs{ display:flex; gap:6px; margin-bottom:14px; }
+  .tabs{ display:flex; gap:6px; margin-bottom:12px; }
   .tab{
     flex:1; min-height:36px; border-radius:8px;
     font-family:inherit; font-size:12px; font-weight:600;
     background:#fff; border:1.5px solid var(--border); color:#888;
     -webkit-appearance:none; cursor:pointer;
     display:flex; align-items:center; justify-content:center;
-    transition:transform .1s;
+    transition:transform .1s; touch-action:manipulation;
   }
   .tab:active{ transform:scale(0.97); }
   .tab.active{ background:var(--primary); border-color:var(--primary); color:#fff; }
   .tab.done{ background:#EDD1FF; border-color:var(--primary); color:var(--primary); }
   .tab.done.active{ background:var(--primary); color:#fff; }
 
-  /* 3. QUESTION / INSTRUCTION BOX */
-  .qbox{
-    background:var(--grey); border-radius:8px;
-    padding:12px 14px; margin-bottom:14px;
-    font-size:14px; color:var(--body); line-height:1.6;
-  }
-
-  /* 4. PUZZLE TITLE */
-  .ptitle{
-    font-size:18px; font-weight:600; color:var(--primary);
-    text-align:center; margin:0 0 8px;
-  }
-
-  /* 5. GAME AREA */
-  .game{ margin-bottom:12px; }
+  /* 3. STATS BAR */
   .stats{ display:flex; gap:5px; margin-bottom:12px; }
   .stat{
     flex:1; background:var(--grey); border:1px solid var(--border);
@@ -84,10 +76,17 @@
   .stat .lab{ font-size:10px; text-transform:uppercase; letter-spacing:0.8px; color:var(--muted); }
   .stat .val{ font-size:17px; font-weight:700; color:var(--primary); margin-top:2px; }
 
+  /* 4. GAME AREA */
   .grid{
     display:grid; gap:6px;
     background:var(--grey); border:1px solid var(--border);
-    border-radius:10px; padding:6px;
+    border-radius:10px; padding:6px; margin-bottom:12px;
+  }
+  .grid.shake{ animation:shake 0.3s ease; }
+  @keyframes shake{
+    0%,100%{transform:translateX(0)}
+    25%{transform:translateX(-4px)}
+    75%{transform:translateX(4px)}
   }
   .cell{
     position:relative; aspect-ratio:1/1; width:100%;
@@ -103,20 +102,18 @@
   .cell.flash{ border-color:var(--secondary); background:#FDE9C9; }
   .pipe{
     position:absolute; inset:0; width:100%; height:100%;
-    transition:transform .18s cubic-bezier(.34,1.4,.5,1);
-    will-change:transform;
+    transition:transform .18s cubic-bezier(.34,1.4,.5,1); will-change:transform;
   }
   .pipe svg{ width:100%; height:100%; display:block; }
   .pipe path{ stroke:var(--pipe); stroke-width:15; stroke-linecap:round; fill:none; transition:stroke .25s; }
   .pipe .hub{ fill:var(--pipe); transition:fill .25s; }
   .pipe .src{ fill:var(--secondary); stroke:#fff; stroke-width:3; }
 
-  /* 6. FEEDBACK BAR */
+  /* 5. FEEDBACK BAR */
   .feedback{
     border-radius:8px; padding:9px 14px; min-height:40px;
     font-size:14px; display:flex; align-items:center;
-    opacity:0; transition:opacity .25s; margin-bottom:12px;
-    line-height:1.4;
+    opacity:0; transition:opacity .25s; margin-bottom:12px; line-height:1.4;
   }
   .feedback.show{ opacity:1; }
   .feedback.ok{ background:#D8F5E0; color:#1b5e20; border:1px solid #b2dfdb; }
@@ -124,45 +121,47 @@
   .feedback.done{ background:#EDD1FF; color:var(--primary); border:1px solid var(--primary); font-weight:700; }
   .feedback.hint{ background:#FDE9C9; color:#a06000; border:1px solid var(--secondary); }
 
-  /* 7. BUTTONS */
+  /* 6. BUTTONS */
   .btn-row{ display:flex; gap:8px; margin-bottom:8px; }
   .btn{
     flex:1; min-height:40px; border-radius:8px;
     font-family:inherit; font-size:14px; cursor:pointer;
     -webkit-appearance:none; transition:transform .1s, opacity .2s;
-    display:flex; align-items:center; justify-content:center;
+    display:flex; align-items:center; justify-content:center; touch-action:manipulation;
   }
   .btn:active{ transform:scale(0.97); }
   .btn-check{ background:var(--primary); color:#fff; font-weight:600; border:none; }
-  .btn-check:disabled{ opacity:0.35; }
+  .btn-check:disabled{ opacity:0.35; pointer-events:none; }
   .btn-next{ background:var(--secondary); color:#fff; font-weight:700; border:none; }
   .btn-hint{ background:#FDE9C9; border:1.5px solid var(--secondary); color:#a06000; font-weight:600; }
   .btn-reset{ background:#fff; border:1.5px solid var(--border); color:#444; font-weight:500; }
   .btn-steps{ background:#fff; border:1.5px solid var(--primary); color:var(--primary); font-weight:600; }
   .hidden{ display:none !important; }
 
-  /* 8. STEP-BY-STEP BOX */
-  .steps{
-    background:#D8F5E0; border-radius:8px;
-    padding:12px 14px; margin-top:10px;
-  }
+  /* 7. STEP-BY-STEP BOX */
+  .steps{ background:#D8F5E0; border-radius:8px; padding:12px 14px; margin-top:10px; }
   .steps h4{ margin:0 0 6px; font-size:13px; font-weight:700; color:#1b5e20; }
   .steps ol{ margin:0; padding-left:20px; }
   .steps li{ font-size:13px; color:#1b5e20; line-height:1.8; }
 
-  /* 9. HOW TO PLAY */
-  .howto{
-    background:var(--grey); border-radius:8px;
-    padding:14px 16px; margin-top:14px;
-  }
+  /* 8. HOW TO PLAY */
+  .howto{ background:var(--grey); border-radius:8px; padding:14px 16px; margin-top:14px; }
   .howto h3{ margin:0 0 10px; font-size:16px; font-weight:700; color:#000; }
   .howto ul{ margin:0; padding-left:18px; list-style:disc; }
   .howto li{ font-size:14px; font-weight:400; color:var(--blue); line-height:1.7; }
 
-  /* 10. FOOTER */
-  .footer{
-    text-align:center; margin-top:16px;
-    font-size:11px; color:var(--muted); line-height:1.5;
+  /* 9. FOOTER */
+  .footer{ text-align:center; margin-top:16px; font-size:11px; color:var(--muted); line-height:1.5; }
+
+  /* CONFETTI */
+  .confetti{ position:absolute; inset:0; pointer-events:none; overflow:hidden; z-index:9; }
+  .confetti i{
+    position:absolute; top:-12px; width:8px; height:8px; border-radius:2px;
+    animation:confettiFall 2s ease-in forwards;
+  }
+  @keyframes confettiFall{
+    0%{ transform:translateY(-12px) rotate(0deg); opacity:1; }
+    100%{ transform:translateY(560px) rotate(420deg); opacity:0; }
   }
 </style>
 </head>
@@ -170,38 +169,31 @@
 <div class="wrap">
   <div class="card">
 
-    <!-- 1. PROGRESS BAR -->
-    <div class="progress"><i id="progFill"></i></div>
+    <!-- SOUND TOGGLE -->
+    <button class="sound" id="soundBtn" aria-label="sound">🔇</button>
+
+    <!-- 1. PUZZLE TITLE -->
+    <h2 class="ptitle">પાઈપ ફેરવો અને જોડો</h2>
+    <p class="psub">દરેક પાઈપ ફેરવીને બધી જોડો — કોઈ છેડો ખુલ્લો ન રહે</p>
 
     <!-- 2. TABS -->
     <div class="tabs" id="tabs"></div>
 
-    <!-- 3. QUESTION / INSTRUCTION BOX -->
-    <div class="qbox">
-      દરેક પાઈપ પર ટૅપ કરીને ફેરવો. બધી પાઈપોને એકબીજા સાથે જોડો જેથી પાણી
-      પીળા સ્રોતથી આખા નેટવર્કમાં વહે — એક પણ છેડો ખુલ્લો ન રહે.
+    <!-- 3. STATS BAR -->
+    <div class="stats">
+      <div class="stat"><div class="lab">Connected</div><div class="val" id="stConn">0/0</div></div>
+      <div class="stat"><div class="lab">Taps</div><div class="val" id="stTaps">0</div></div>
     </div>
 
-    <!-- 4. PUZZLE TITLE -->
-    <h2 class="ptitle" id="ptitle">પાઈપ ફેરવો અને જોડો</h2>
+    <!-- 4. GAME AREA -->
+    <div class="grid" id="grid"></div>
 
-    <!-- 5. GAME AREA -->
-    <div class="game">
-      <div class="stats">
-        <div class="stat"><div class="lab">ટૅપ</div><div class="val" id="stTaps">૦</div></div>
-        <div class="stat"><div class="lab">જોડાયેલ</div><div class="val" id="stConn">૧/૧</div></div>
-        <div class="stat"><div class="lab">સ્થિતિ</div><div class="val" id="stState">ચાલુ</div></div>
-      </div>
-      <div class="grid" id="grid"></div>
-    </div>
-
-    <!-- 6. FEEDBACK BAR -->
+    <!-- 5. FEEDBACK BAR -->
     <div class="feedback" id="feedback"></div>
 
-    <!-- 7. BUTTONS -->
-    <div class="btn-row">
-      <button class="btn btn-check" id="btnCheck">જવાબ તપાસો</button>
-      <button class="btn btn-next hidden" id="btnNext">આગળનો કોયડો →</button>
+    <!-- 6. BUTTONS -->
+    <div class="btn-row hidden" id="rowNext">
+      <button class="btn btn-next" id="btnNext">આગળનો કોયડો →</button>
     </div>
     <div class="btn-row">
       <button class="btn btn-hint" id="btnHint">💡 સંકેત</button>
@@ -211,30 +203,33 @@
       <button class="btn btn-steps" id="btnSteps">ઉકેલની રીત જુઓ</button>
     </div>
 
-    <!-- 8. STEP-BY-STEP BOX -->
+    <!-- 7. STEP-BY-STEP BOX -->
     <div class="steps hidden" id="stepsBox">
       <h4>ઉકેલની રીત</h4>
       <ol>
         <li>પીળા સ્રોત (કેન્દ્ર બિંદુ) થી શરૂ કરો.</li>
         <li>દરેક પાઈપને એવી રીતે ફેરવો કે તેનો છેડો બાજુની પાઈપના છેડા સામે મળે.</li>
         <li>ખુલ્લા છેડા દીવાલ તરફ ન રહે — દરેક છેડો કોઈ પાઈપ સાથે જોડાવો જોઈએ.</li>
-        <li>જ્યારે બધી પાઈપ ભૂરા રંગે ભરાઈ જાય, એટલે આખું નેટવર્ક જોડાઈ ગયું!</li>
+        <li>બધી પાઈપ ભૂરા રંગે ભરાઈ જાય એટલે કોયડો આપોઆપ ઉકેલાઈ જશે!</li>
       </ol>
     </div>
 
-    <!-- 9. HOW TO PLAY -->
+    <!-- 8. HOW TO PLAY -->
     <div class="howto">
       <h3>How to Play</h3>
       <ul>
-        <li>દરેક પાઈપ પર ટૅપ કરો — તે ઘડિયાળની દિશામાં ૯૦° ફરશે.</li>
+        <li>દરેક પાઈપ પર ટૅપ કરો — તે ઘડિયાળની દિશામાં 90° ફરશે.</li>
         <li>પાઈપનો છેડો બાજુની પાઈપ સાથે મળે ત્યારે જોડાણ થાય અને પાઈપ ભૂરી રંગાય.</li>
-        <li>બધી પાઈપ એક જ નેટવર્કમાં જોડાય અને કોઈ છેડો ખુલ્લો ન રહે — ત્યારે કોયડો ઉકેલાયો.</li>
+        <li>બધી પાઈપ એક જ નેટવર્કમાં જોડાય અને કોઈ છેડો ખુલ્લો ન રહે — ત્યારે કોયડો આપોઆપ પૂર્ણ થાય.</li>
         <li>ઓછા ટૅપમાં ઉકેલો તો વધુ મજા!</li>
       </ul>
     </div>
 
-    <!-- 10. FOOTER -->
+    <!-- 9. FOOTER -->
     <div class="footer">©Dreamchild Garbhsanskar — Connect the Pipe Series</div>
+
+    <!-- CONFETTI -->
+    <div class="confetti" id="confetti"></div>
 
   </div>
 </div>
@@ -245,7 +240,6 @@
   var DR=[-1,0,1,0], DC=[0,1,0,-1];
   function rot1(m){return ((m<<1)|(m>>3))&15;}
   function rotN(m,n){n=((n%4)+4)%4;for(var i=0;i<n;i++)m=rot1(m);return m;}
-
   function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296;};}
 
   function gen(rows,cols,rng){
@@ -262,37 +256,24 @@
     return {sol:sol,start:start};
   }
 
-  // ---------- Puzzle definitions ----------
-  var DEFS=[
-    {rows:4,cols:4,seed:101},
-    {rows:5,cols:5,seed:202},
-    {rows:6,cols:6,seed:303}
-  ];
+  var DEFS=[{rows:4,cols:4,seed:101},{rows:5,cols:5,seed:202},{rows:6,cols:6,seed:303}];
+  var KEY='dcgs_connectpipe_v1';
 
   function buildPuzzle(def){
-    var rng=mulberry32(def.seed);
-    var g=gen(def.rows,def.cols,rng);
-    var N=def.rows*def.cols;
-    var p={rows:def.rows,cols:def.cols,sol:g.sol,start:g.start,
-           N:N,scr:new Array(N),rot:new Array(N).fill(0),init:new Array(N),
-           taps:0,solved:false,checked:false};
-    scramble(p,rng);
-    return p;
+    var rng=mulberry32(def.seed), g=gen(def.rows,def.cols,rng), N=def.rows*def.cols;
+    var p={rows:def.rows,cols:def.cols,sol:g.sol,start:g.start,N:N,
+           scr:new Array(N),rot:new Array(N).fill(0),init:new Array(N),
+           taps:0,touched:false,solved:false};
+    scramble(p,rng); return p;
   }
-
   function scramble(p,rng){
-    rng=rng||Math.random;
-    for(var attempt=0;attempt<50;attempt++){
-      for(var i=0;i<p.N;i++){
-        p.scr[i]=Math.floor((rng===Math.random?Math.random():rng())*4);
-        p.init[i]=rotN(p.sol[i],p.scr[i]);
-        p.rot[i]=0;
-      }
-      if(!isSolved(p))break; // avoid starting solved
+    var rnd=rng||Math.random;
+    for(var a=0;a<60;a++){
+      for(var i=0;i<p.N;i++){p.scr[i]=Math.floor(rnd()*4);p.init[i]=rotN(p.sol[i],p.scr[i]);p.rot[i]=0;}
+      if(!isSolved(p))break;
     }
-    p.taps=0; p.solved=false; p.checked=false;
+    p.taps=0;p.touched=false;p.solved=false;
   }
-
   function cur(p,i){return rotN(p.init[i],p.rot[i]);}
 
   function isSolved(p){
@@ -302,97 +283,115 @@
       for(var d=0;d<4;d++) if(m&(1<<d)){
         var nr=r+DR[d],nc=c+DC[d];
         if(nr<0||nc<0||nr>=rows||nc>=cols)return false;
-        var ni=nr*cols+nc; if(!(cur(p,ni)&(1<<((d+2)%4))))return false;
+        if(!(cur(p,nr*cols+nc)&(1<<((d+2)%4))))return false;
       }
     }
-    // connectivity
     var seen=new Array(p.N).fill(false),q=[0],cnt=1; seen[0]=true;
     while(q.length){var i2=q.pop(),r2=(i2/cols)|0,c2=i2%cols,m2=cur(p,i2);
       for(var d2=0;d2<4;d2++) if(m2&(1<<d2)){var ni2=(r2+DR[d2])*cols+(c2+DC[d2]); if(!seen[ni2]){seen[ni2]=true;cnt++;q.push(ni2);}}}
     return cnt===p.N;
   }
-
   function waterSet(p){
-    var rows=p.rows,cols=p.cols,seen=new Array(p.N).fill(false);
-    var q=[p.start]; seen[p.start]=true;
+    var rows=p.rows,cols=p.cols,seen=new Array(p.N).fill(false),q=[p.start]; seen[p.start]=true;
     while(q.length){var i=q.pop(),r=(i/cols)|0,c=i%cols,m=cur(p,i);
       for(var d=0;d<4;d++) if(m&(1<<d)){var nr=r+DR[d],nc=c+DC[d];if(nr<0||nc<0||nr>=rows||nc>=cols)continue;var ni=nr*cols+nc;
         if(!seen[ni] && (cur(p,ni)&(1<<((d+2)%4)))){seen[ni]=true;q.push(ni);}}}
     return seen;
   }
 
-  // ---------- Rendering ----------
+  // ---------- SVG ----------
   var SEG={0:'M50 50 L50 5',1:'M50 50 L95 50',2:'M50 50 L50 95',3:'M50 50 L5 50'};
   function pipeSVG(mask,isSource){
     var s='';
     for(var d=0;d<4;d++) if(mask&(1<<d)) s+='<path d="'+SEG[d]+'"/>';
-    s+= isSource ? '<circle cx="50" cy="50" r="13" class="src"/>'
-                 : '<circle cx="50" cy="50" r="8" class="hub"/>';
+    s+= isSource ? '<circle cx="50" cy="50" r="13" class="src"/>' : '<circle cx="50" cy="50" r="8" class="hub"/>';
     return '<svg viewBox="0 0 100 100">'+s+'</svg>';
   }
 
-  function toGu(n){
-    var map={'0':'૦','1':'૧','2':'૨','3':'૩','4':'૪','5':'૫','6':'૬','7':'૭','8':'૮','9':'૯'};
-    return String(n).replace(/[0-9]/g,function(d){return map[d];});
+  // ---------- Storage ----------
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify({
+    tab:idx, sound:soundOn, celeb:celebShown,
+    pz:puzzles.map(function(p){return {scr:p.scr,rot:p.rot,taps:p.taps,touched:p.touched,solved:p.solved};})
+  })); }catch(e){} }
+  function load(){ try{ return JSON.parse(localStorage.getItem(KEY)); }catch(e){ return null; } }
+
+  // ---------- Sound ----------
+  var soundOn=false, audioCtx=null;
+  function beep(correct){
+    if(!soundOn) return;
+    try{
+      audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
+      var o=audioCtx.createOscillator(), g=audioCtx.createGain();
+      o.connect(g); g.connect(audioCtx.destination); o.type='sine';
+      o.frequency.value = correct ? 880 : 200;
+      var t=audioCtx.currentTime;
+      g.gain.setValueAtTime(0.0001,t);
+      g.gain.exponentialRampToValueAtTime(correct?0.16:0.12, t+0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, t+0.25);
+      o.start(t); o.stop(t+0.26);
+    }catch(e){}
   }
 
-  // ---------- State / DOM ----------
+  // ---------- State ----------
   var puzzles=DEFS.map(buildPuzzle);
-  var idx=0;
+  var idx=0, celebShown=false;
 
+  (function restore(){
+    var d=load();
+    if(!d||!d.pz||d.pz.length!==puzzles.length) return;
+    for(var i=0;i<puzzles.length;i++){
+      var s=d.pz[i], p=puzzles[i];
+      if(!s||!s.scr||s.scr.length!==p.N) continue;
+      p.scr=s.scr.slice();
+      for(var k=0;k<p.N;k++) p.init[k]=rotN(p.sol[k],p.scr[k]);
+      p.rot=(s.rot&&s.rot.length===p.N)? s.rot.slice() : new Array(p.N).fill(0);
+      p.taps=s.taps||0; p.touched=!!s.touched; p.solved=!!s.solved;
+    }
+    idx=(typeof d.tab==='number'&&d.tab>=0&&d.tab<puzzles.length)? d.tab : 0;
+    soundOn=!!d.sound; celebShown=!!d.celeb;
+  })();
+
+  function allSolved(){ return puzzles.every(function(p){return p.solved;}); }
+
+  // ---------- DOM ----------
   var elTabs=document.getElementById('tabs');
   var elGrid=document.getElementById('grid');
-  var elProg=document.getElementById('progFill');
   var elFeed=document.getElementById('feedback');
   var elTaps=document.getElementById('stTaps');
   var elConn=document.getElementById('stConn');
-  var elState=document.getElementById('stState');
-  var btnCheck=document.getElementById('btnCheck');
+  var elConfetti=document.getElementById('confetti');
+  var rowNext=document.getElementById('rowNext');
   var btnNext=document.getElementById('btnNext');
   var btnHint=document.getElementById('btnHint');
   var btnReset=document.getElementById('btnReset');
   var btnSteps=document.getElementById('btnSteps');
+  var btnSound=document.getElementById('soundBtn');
   var stepsBox=document.getElementById('stepsBox');
 
-  // build tabs
   puzzles.forEach(function(_,i){
     var b=document.createElement('button');
     b.className='tab';
-    b.addEventListener('click',function(){ idx=i; render(); });
+    b.addEventListener('click',function(){ idx=i; render(); save(); });
     elTabs.appendChild(b);
   });
 
   function refreshTabs(){
     Array.prototype.forEach.call(elTabs.children,function(b,i){
-      var done=puzzles[i].solved;
-      b.textContent=(done?'✓ ':'')+'P'+(i+1);
-      b.className='tab'+(i===idx?' active':'')+(done?' done':'');
+      b.textContent='P'+(i+1); // no tick / prefix — color shows done
+      b.className='tab'+(i===idx?' active':'')+(puzzles[i].solved?' done':'');
     });
   }
-
-  function refreshProgress(){
-    var done=puzzles.filter(function(p){return p.solved;}).length;
-    elProg.style.width=(done/puzzles.length*100)+'%';
-  }
-
-  function showFeedback(type,msg){
-    elFeed.className='feedback show '+type;
-    elFeed.textContent=msg;
-  }
+  function showFeedback(type,msg){ elFeed.className='feedback show '+type; elFeed.textContent=msg; }
   function clearFeedback(){ elFeed.className='feedback'; elFeed.textContent=''; }
 
   function render(){
     var p=puzzles[idx];
-    document.documentElement; // noop
-    // grid
     elGrid.style.gridTemplateColumns='repeat('+p.cols+',1fr)';
     elGrid.innerHTML='';
     for(var i=0;i<p.N;i++){
       (function(i){
-        var cell=document.createElement('button');
-        cell.className='cell';
-        var pipe=document.createElement('span');
-        pipe.className='pipe';
+        var cell=document.createElement('button'); cell.className='cell';
+        var pipe=document.createElement('span'); pipe.className='pipe';
         pipe.innerHTML=pipeSVG(p.init[i], i===p.start);
         pipe.style.transform='rotate('+(p.rot[i]*90)+'deg)';
         cell.appendChild(pipe);
@@ -400,94 +399,92 @@
         elGrid.appendChild(cell);
       })(i);
     }
-    btnNext.classList.toggle('hidden', !p.solved);
-    btnCheck.classList.toggle('hidden', p.solved);
-    btnCheck.disabled=false;
+    rowNext.classList.toggle('hidden', !(p.solved && idx<puzzles.length-1));
     stepsBox.classList.add('hidden');
+    btnSound.textContent = soundOn ? '🔊' : '🔇';
     clearFeedback();
     paint();
-    refreshTabs(); refreshProgress();
-    if(p.solved) showFeedback('done','🎉 શાબાશ! બધી પાઈપ જોડાઈ ગઈ!');
+    refreshTabs();
+    if(p.solved){
+      showFeedback('done', allSolved() ? 'બધી કોયડા પૂર્ણ! 🎉 Well done!' : '🎉 શાબાશ! બધી પાઈપ જોડાઈ ગઈ!');
+    }
   }
 
   function paint(){
-    var p=puzzles[idx];
-    var water=waterSet(p);
-    var connCount=water.filter(Boolean).length;
+    var p=puzzles[idx], water=waterSet(p), connCount=water.filter(Boolean).length;
     var cells=elGrid.children;
     for(var i=0;i<p.N;i++){
-      var cell=cells[i], pipe=cell.firstChild;
-      var color;
+      var cell=cells[i], pipe=cell.firstChild, color;
       if(p.solved){ color='#43a047'; cell.className='cell win'; }
       else if(water[i]){ color='var(--blue)'; cell.className='cell lit'; }
       else { color='var(--muted)'; cell.className='cell'; }
       pipe.style.setProperty('--pipe', color);
     }
-    elTaps.textContent=toGu(p.taps);
-    elConn.textContent=toGu(connCount)+'/'+toGu(p.N);
-    elState.textContent=p.solved?'ઉકેલાયું':'ચાલુ';
+    elConn.textContent=connCount+'/'+p.N;
+    elTaps.textContent=p.taps;
   }
 
   function onTap(i,cell,pipe){
     var p=puzzles[idx];
     if(p.solved) return;
-    p.rot[i]++; p.taps++;
+    p.rot[i]++; p.taps++; p.touched=true;
     pipe.style.transform='rotate('+(p.rot[i]*90)+'deg)';
     paint();
-    if(isSolved(p)) win();
+    if(isSolved(p)){ win(); } else { save(); }
+  }
+
+  function confetti(){
+    var cols=['#752886','#F9A824','#1e88e5','#43a047'];
+    elConfetti.innerHTML='';
+    for(var i=0;i<18;i++){
+      var s=document.createElement('i');
+      s.style.left=(Math.random()*100)+'%';
+      s.style.background=cols[i%cols.length];
+      s.style.animationDelay=(Math.random()*0.4).toFixed(2)+'s';
+      elConfetti.appendChild(s);
+    }
+    setTimeout(function(){ elConfetti.innerHTML=''; },2400);
   }
 
   function win(){
     var p=puzzles[idx];
     p.solved=true;
     paint();
-    btnCheck.classList.add('hidden');
-    btnNext.classList.toggle('hidden', idx>=puzzles.length-1 ? true : false);
-    if(idx>=puzzles.length-1){ btnNext.classList.add('hidden'); }
-    else { btnNext.classList.remove('hidden'); }
-    showFeedback('done','🎉 શાબાશ! બધી પાઈપ જોડાઈ ગઈ!');
-    refreshTabs(); refreshProgress();
+    rowNext.classList.toggle('hidden', idx>=puzzles.length-1);
+    refreshTabs();
+    beep(true);
+    if(allSolved() && !celebShown){
+      celebShown=true; showFeedback('done','બધી કોયડા પૂર્ણ! 🎉 Well done!'); confetti();
+    } else {
+      showFeedback('done','🎉 શાબાશ! બધી પાઈપ જોડાઈ ગઈ!');
+    }
+    save();
   }
 
   // ---------- Buttons ----------
-  btnCheck.addEventListener('click',function(){
-    var p=puzzles[idx];
-    p.checked=true;
-    stepsBox.classList.remove('hidden');
-    if(isSolved(p)){ win(); }
-    else{
-      var water=waterSet(p);
-      var connected=water.filter(Boolean).length;
-      if(connected>1)
-        showFeedback('bad','હજુ થોડા છેડા ખુલ્લા છે ('+toGu(connected)+'/'+toGu(p.N)+' જોડાયેલ). ફેરવતા રહો!');
-      else
-        showFeedback('bad','હજુ કોઈ પાઈપ સ્રોત સાથે જોડાઈ નથી. છેડા મેળવો!');
-    }
-  });
-
   btnNext.addEventListener('click',function(){
-    if(idx<puzzles.length-1){ idx++; render(); }
+    if(idx<puzzles.length-1){
+      idx++; render(); save();
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
   });
 
   btnHint.addEventListener('click',function(){
     var p=puzzles[idx];
     if(p.solved) return;
-    // find a cell not matching its solution orientation
     var wrong=[];
     for(var i=0;i<p.N;i++){ if(cur(p,i)!==p.sol[i]) wrong.push(i); }
-    if(!wrong.length){ showFeedback('hint','💡 બધી પાઈપ સાચી ગોઠવાઈ ગઈ — હવે જોડાણ તપાસો!'); return; }
+    if(!wrong.length){ showFeedback('hint','💡 બધી પાઈપ સાચી ગોઠવાઈ ગઈ છે!'); return; }
     var pick=wrong[Math.floor(Math.random()*wrong.length)];
-    // rotate forward to align cur==sol  (scr+rot)%4===0
-    var k=((4-((p.scr[pick]+p.rot[pick])%4))%4);
-    if(k===0)k=4;
-    p.rot[pick]+=k;
+    var step=((4-((p.scr[pick]+p.rot[pick])%4))%4); if(step===0)step=4;
+    p.rot[pick]+=step; p.touched=true;
     var cell=elGrid.children[pick], pipe=cell.firstChild;
     pipe.style.transform='rotate('+(p.rot[pick]*90)+'deg)';
     cell.classList.add('flash');
     setTimeout(function(){ cell.classList.remove('flash'); paint(); },450);
     paint();
     showFeedback('hint','💡 એક પાઈપ સાચી ગોઠવી દીધી — બાકીની તમે કરો!');
-    if(isSolved(p)) setTimeout(win,300);
+    if(isSolved(p)){ win(); } else { save(); }
   });
 
   btnReset.addEventListener('click',function(){
@@ -495,13 +492,17 @@
     scramble(p);
     render();
     showFeedback('ok','નવી ગોઠવણ તૈયાર — ફરી જોડો!');
+    save();
   });
 
-  btnSteps.addEventListener('click',function(){
-    stepsBox.classList.toggle('hidden');
+  btnSteps.addEventListener('click',function(){ stepsBox.classList.toggle('hidden'); });
+
+  btnSound.addEventListener('click',function(){
+    soundOn=!soundOn;
+    btnSound.textContent = soundOn ? '🔊' : '🔇';
+    save();
   });
 
-  // init
   render();
 })();
 </script>
