@@ -65,12 +65,12 @@
     border-radius:14px; padding:14px; margin-bottom:12px;
   }
   .sound{
-    position:absolute; top:10px; right:10px;
+    position:absolute; top:10px; right:14px;
     width:32px; height:32px; border-radius:8px;
     border:1.5px solid var(--border); background:#fff;
     font-size:15px; line-height:1; cursor:pointer;
     -webkit-appearance:none; display:flex; align-items:center; justify-content:center;
-    z-index:5; touch-action:manipulation;
+    z-index:10; touch-action:manipulation;
   }
   .sound:active{ transform:scale(0.95); }
 
@@ -172,9 +172,11 @@
     <div class="stat"><div class="lab">Taps</div><div class="val" id="stTaps">0</div></div>
   </div>
 
+  <!-- SOUND TOGGLE — fixed to page, exempt from 1–9 layout order -->
+  <button class="sound" id="soundBtn" aria-label="sound">🔇</button>
+
   <!-- 4. GAME AREA (white floating card) -->
   <div class="gamecard">
-    <button class="sound" id="soundBtn" aria-label="sound">🔇</button>
     <div class="grid" id="grid"></div>
   </div>
 
