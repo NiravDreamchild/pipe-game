@@ -11,8 +11,8 @@
 <style>
   :root{
     --primary:#752886; --secondary:#F9A824;
-    --page:#F2F2F2; --card:#FFFFFF;
-    --title:#000000; --body:#444444; --muted:#C2C2C2;
+    --page:#FFFFFF; --card:#FFFFFF;
+    --body:#444444; --muted:#C2C2C2;
     --border:#E2E3E4; --grey:#F2F2F2; --blue:#1e88e5;
     --pipe:#C2C2C2;
   }
@@ -24,39 +24,20 @@
     color:var(--body);
     display:flex; justify-content:center;
   }
-  .wrap{ width:100%; max-width:560px; padding:12px 14px 22px; }
-  .card{
-    position:relative; overflow:hidden;
-    background:var(--card); border-radius:14px;
-    border:1px solid var(--border); padding:14px 14px 16px;
-  }
-
-  /* SOUND TOGGLE — top-right of game card */
-  .sound{
-    position:absolute; top:12px; right:12px;
-    width:32px; height:32px; border-radius:8px;
-    border:1.5px solid var(--border); background:#fff;
-    font-size:15px; line-height:1; cursor:pointer;
-    -webkit-appearance:none; display:flex; align-items:center; justify-content:center;
-    z-index:5; touch-action:manipulation;
-  }
-  .sound:active{ transform:scale(0.95); }
+  .wrap{ position:relative; width:100%; max-width:560px; padding:12px 14px 22px; }
 
   /* 1. PUZZLE TITLE */
   .ptitle{
     font-size:18px; font-weight:600; color:var(--primary);
-    text-align:center; margin:0 4px 4px; padding:0 30px;
+    text-align:center; margin:0 0 4px;
   }
-  .psub{
-    font-size:13px; color:#888; text-align:center;
-    margin:0 0 12px;
-  }
+  .psub{ font-size:13px; color:#888; text-align:center; margin:0 0 12px; }
 
-  /* 2. TABS */
+  /* 2. TABS — radius 6px */
   .tabs{ display:flex; gap:6px; margin-bottom:12px; }
   .tab{
-    flex:1; min-height:36px; border-radius:8px;
-    font-family:inherit; font-size:12px; font-weight:600;
+    flex:1; min-height:36px; border-radius:6px;
+    font-family:inherit; font-size:12px; font-weight:600; text-align:center;
     background:#fff; border:1.5px solid var(--border); color:#888;
     -webkit-appearance:none; cursor:pointer;
     display:flex; align-items:center; justify-content:center;
@@ -67,7 +48,7 @@
   .tab.done{ background:#EDD1FF; border-color:var(--primary); color:var(--primary); }
   .tab.done.active{ background:var(--primary); color:#fff; }
 
-  /* 3. STATS BAR */
+  /* 3. STATS BAR — radius 8px */
   .stats{ display:flex; gap:5px; margin-bottom:12px; }
   .stat{
     flex:1; background:var(--grey); border:1px solid var(--border);
@@ -76,12 +57,24 @@
   .stat .lab{ font-size:10px; text-transform:uppercase; letter-spacing:0.8px; color:var(--muted); }
   .stat .val{ font-size:17px; font-weight:700; color:var(--primary); margin-top:2px; }
 
-  /* 4. GAME AREA */
-  .grid{
-    display:grid; gap:6px;
-    background:var(--grey); border:1px solid var(--border);
-    border-radius:10px; padding:6px; margin-bottom:12px;
+  /* 4. GAME AREA — white card floating on white page */
+  .gamecard{
+    position:relative;
+    background:var(--card); border:1px solid var(--border);
+    box-shadow:0 2px 12px rgba(117,40,134,0.06);
+    border-radius:14px; padding:14px; margin-bottom:12px;
   }
+  .sound{
+    position:absolute; top:10px; right:10px;
+    width:32px; height:32px; border-radius:8px;
+    border:1.5px solid var(--border); background:#fff;
+    font-size:15px; line-height:1; cursor:pointer;
+    -webkit-appearance:none; display:flex; align-items:center; justify-content:center;
+    z-index:5; touch-action:manipulation;
+  }
+  .sound:active{ transform:scale(0.95); }
+
+  .grid{ display:grid; gap:6px; }
   .grid.shake{ animation:shake 0.3s ease; }
   @keyframes shake{
     0%,100%{transform:translateX(0)}
@@ -109,7 +102,7 @@
   .pipe .hub{ fill:var(--pipe); transition:fill .25s; }
   .pipe .src{ fill:var(--secondary); stroke:#fff; stroke-width:3; }
 
-  /* 5. FEEDBACK BAR */
+  /* 5. FEEDBACK BAR — radius 8px */
   .feedback{
     border-radius:8px; padding:9px 14px; min-height:40px;
     font-size:14px; display:flex; align-items:center;
@@ -121,7 +114,7 @@
   .feedback.done{ background:#EDD1FF; color:var(--primary); border:1px solid var(--primary); font-weight:700; }
   .feedback.hint{ background:#FDE9C9; color:#a06000; border:1px solid var(--secondary); }
 
-  /* 6. BUTTONS */
+  /* 6. BUTTONS — radius 8px */
   .btn-row{ display:flex; gap:8px; margin-bottom:8px; }
   .btn{
     flex:1; min-height:40px; border-radius:8px;
@@ -130,108 +123,101 @@
     display:flex; align-items:center; justify-content:center; touch-action:manipulation;
   }
   .btn:active{ transform:scale(0.97); }
-  .btn-check{ background:var(--primary); color:#fff; font-weight:600; border:none; }
-  .btn-check:disabled{ opacity:0.35; pointer-events:none; }
   .btn-next{ background:var(--secondary); color:#fff; font-weight:700; border:none; }
   .btn-hint{ background:#FDE9C9; border:1.5px solid var(--secondary); color:#a06000; font-weight:600; }
   .btn-reset{ background:#fff; border:1.5px solid var(--border); color:#444; font-weight:500; }
-  .btn-steps{ background:#fff; border:1.5px solid var(--primary); color:var(--primary); font-weight:600; }
   .hidden{ display:none !important; }
 
-  /* 7. STEP-BY-STEP BOX */
-  .steps{ background:#D8F5E0; border-radius:8px; padding:12px 14px; margin-top:10px; }
-  .steps h4{ margin:0 0 6px; font-size:13px; font-weight:700; color:#1b5e20; }
+  /* 7. STEP-BY-STEP BOX — radius 6px, auto-shows on solve */
+  .steps{ background:#D8F5E0; border-radius:6px; padding:12px 14px; margin-top:10px; text-align:left; }
+  .steps h4{ margin:0 0 6px; font-size:16px; font-weight:600; color:#1b5e20; }
   .steps ol{ margin:0; padding-left:20px; }
-  .steps li{ font-size:13px; color:#1b5e20; line-height:1.8; }
+  .steps li{ font-size:12px; font-weight:400; color:#1b5e20; line-height:1.8; }
 
-  /* 8. HOW TO PLAY */
-  .howto{ background:var(--grey); border-radius:8px; padding:14px 16px; margin-top:14px; }
-  .howto h3{ margin:0 0 10px; font-size:16px; font-weight:700; color:#000; }
+  /* 8. HOW TO PLAY — radius 6px, bordered grey box */
+  .howto{ background:var(--grey); border:1px solid var(--border); border-radius:6px; padding:14px 16px; margin-top:14px; text-align:left; }
+  .howto h3{ margin:0 0 10px; font-size:16px; font-weight:600; color:#444444; }
   .howto ul{ margin:0; padding-left:18px; list-style:disc; }
-  .howto li{ font-size:14px; font-weight:400; color:var(--blue); line-height:1.7; }
+  .howto li{font-size:14px;font-weight:400;color:#444444;line-height:1.7;}
+
 
   /* 9. FOOTER */
   .footer{ text-align:center; margin-top:16px; font-size:11px; color:var(--muted); line-height:1.5; }
 
   /* CONFETTI */
-  .confetti{ position:absolute; inset:0; pointer-events:none; overflow:hidden; z-index:9; }
+  .confetti{ position:absolute; inset:0; pointer-events:none; overflow:hidden; z-index:50; }
   .confetti i{
     position:absolute; top:-12px; width:8px; height:8px; border-radius:2px;
     animation:confettiFall 2s ease-in forwards;
   }
   @keyframes confettiFall{
     0%{ transform:translateY(-12px) rotate(0deg); opacity:1; }
-    100%{ transform:translateY(560px) rotate(420deg); opacity:0; }
+    100%{ transform:translateY(620px) rotate(420deg); opacity:0; }
   }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="card">
 
-    <!-- SOUND TOGGLE -->
-    <button class="sound" id="soundBtn" aria-label="sound">🔇</button>
+  <!-- 1. PUZZLE TITLE -->
+  <h2 class="ptitle">પાઈપ ફેરવો અને જોડો</h2>
+  <p class="psub">દરેક પાઈપ ફેરવીને બધી જોડો — કોઈ છેડો ખુલ્લો ન રહે</p>
 
-    <!-- 1. PUZZLE TITLE -->
-    <h2 class="ptitle">પાઈપ ફેરવો અને જોડો</h2>
-    <p class="psub">દરેક પાઈપ ફેરવીને બધી જોડો — કોઈ છેડો ખુલ્લો ન રહે</p>
+  <!-- 2. TABS -->
+  <div class="tabs" id="tabs"></div>
 
-    <!-- 2. TABS -->
-    <div class="tabs" id="tabs"></div>
-
-    <!-- 3. STATS BAR -->
-    <div class="stats">
-      <div class="stat"><div class="lab">Connected</div><div class="val" id="stConn">0/0</div></div>
-      <div class="stat"><div class="lab">Taps</div><div class="val" id="stTaps">0</div></div>
-    </div>
-
-    <!-- 4. GAME AREA -->
-    <div class="grid" id="grid"></div>
-
-    <!-- 5. FEEDBACK BAR -->
-    <div class="feedback" id="feedback"></div>
-
-    <!-- 6. BUTTONS -->
-    <div class="btn-row hidden" id="rowNext">
-      <button class="btn btn-next" id="btnNext">આગળનો કોયડો →</button>
-    </div>
-    <div class="btn-row">
-      <button class="btn btn-hint" id="btnHint">💡 સંકેત</button>
-      <button class="btn btn-reset" id="btnReset">↺ રીસેટ</button>
-    </div>
-    <div class="btn-row">
-      <button class="btn btn-steps" id="btnSteps">ઉકેલની રીત જુઓ</button>
-    </div>
-
-    <!-- 7. STEP-BY-STEP BOX -->
-    <div class="steps hidden" id="stepsBox">
-      <h4>ઉકેલની રીત</h4>
-      <ol>
-        <li>પીળા સ્રોત (કેન્દ્ર બિંદુ) થી શરૂ કરો.</li>
-        <li>દરેક પાઈપને એવી રીતે ફેરવો કે તેનો છેડો બાજુની પાઈપના છેડા સામે મળે.</li>
-        <li>ખુલ્લા છેડા દીવાલ તરફ ન રહે — દરેક છેડો કોઈ પાઈપ સાથે જોડાવો જોઈએ.</li>
-        <li>બધી પાઈપ ભૂરા રંગે ભરાઈ જાય એટલે કોયડો આપોઆપ ઉકેલાઈ જશે!</li>
-      </ol>
-    </div>
-
-    <!-- 8. HOW TO PLAY -->
-    <div class="howto">
-      <h3>How to Play</h3>
-      <ul>
-        <li>દરેક પાઈપ પર ટૅપ કરો — તે ઘડિયાળની દિશામાં 90° ફરશે.</li>
-        <li>પાઈપનો છેડો બાજુની પાઈપ સાથે મળે ત્યારે જોડાણ થાય અને પાઈપ ભૂરી રંગાય.</li>
-        <li>બધી પાઈપ એક જ નેટવર્કમાં જોડાય અને કોઈ છેડો ખુલ્લો ન રહે — ત્યારે કોયડો આપોઆપ પૂર્ણ થાય.</li>
-        <li>ઓછા ટૅપમાં ઉકેલો તો વધુ મજા!</li>
-      </ul>
-    </div>
-
-    <!-- 9. FOOTER -->
-    <div class="footer">©Dreamchild Garbhsanskar — Connect the Pipe Series</div>
-
-    <!-- CONFETTI -->
-    <div class="confetti" id="confetti"></div>
-
+  <!-- 3. STATS BAR -->
+  <div class="stats">
+    <div class="stat"><div class="lab">Connected</div><div class="val" id="stConn">0/0</div></div>
+    <div class="stat"><div class="lab">Taps</div><div class="val" id="stTaps">0</div></div>
   </div>
+
+  <!-- 4. GAME AREA (white floating card) -->
+  <div class="gamecard">
+    <button class="sound" id="soundBtn" aria-label="sound">🔇</button>
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <!-- 5. FEEDBACK BAR -->
+  <div class="feedback" id="feedback"></div>
+
+  <!-- 6. BUTTONS -->
+  <div class="btn-row hidden" id="rowNext">
+    <button class="btn btn-next" id="btnNext">આગળનો કોયડો →</button>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-hint" id="btnHint">💡 સંકેત</button>
+    <button class="btn btn-reset" id="btnReset">↺ રીસેટ</button>
+  </div>
+
+  <!-- 7. STEP-BY-STEP BOX (auto-shows on solve) -->
+  <div class="steps hidden" id="stepsBox">
+    <h4>ઉકેલની રીત</h4>
+    <ol>
+      <li>પીળા સ્રોત (કેન્દ્ર બિંદુ) થી શરૂ કરો.</li>
+      <li>દરેક પાઈપને એવી રીતે ફેરવો કે તેનો છેડો બાજુની પાઈપના છેડા સામે મળે.</li>
+      <li>ખુલ્લા છેડા દીવાલ તરફ ન રહે — દરેક છેડો કોઈ પાઈપ સાથે જોડાવો જોઈએ.</li>
+      <li>બધી પાઈપ ભૂરા રંગે ભરાઈ જાય એટલે કોયડો આપોઆપ ઉકેલાઈ જશે!</li>
+    </ol>
+  </div>
+
+  <!-- 8. HOW TO PLAY -->
+  <div class="howto">
+    <h3>How to Play</h3>
+    <ul>
+      <li>દરેક પાઈપ પર ટૅપ કરો — તે ઘડિયાળની દિશામાં 90° ફરશે.</li>
+      <li>પાઈપનો છેડો બાજુની પાઈપ સાથે મળે ત્યારે જોડાણ થાય અને પાઈપ ભૂરી રંગાય.</li>
+      <li>બધી પાઈપ એક જ નેટવર્કમાં જોડાય અને કોઈ છેડો ખુલ્લો ન રહે — ત્યારે કોયડો આપોઆપ પૂર્ણ થાય.</li>
+      <li>ઓછા ટૅપમાં ઉકેલો તો વધુ મજા!</li>
+    </ul>
+  </div>
+
+  <!-- 9. FOOTER -->
+  <div class="footer">©Dreamchild Garbhsanskar</div>
+
+  <!-- CONFETTI -->
+  <div class="confetti" id="confetti"></div>
+
 </div>
 
 <script>
@@ -308,29 +294,31 @@
     return '<svg viewBox="0 0 100 100">'+s+'</svg>';
   }
 
+  // ---------- Sound (Web Audio, off by default) ----------
+  var soundOn=false, actx;
+  function ac(){ if(!actx) actx=new (window.AudioContext||window.webkitAudioContext)(); if(actx.state==='suspended') actx.resume(); return actx; }
+  function tone(f,t0,dur,type,peak){
+    try{
+      var c=ac(),o=c.createOscillator(),g=c.createGain();
+      o.type=type; o.frequency.value=f;
+      var s=c.currentTime+t0;
+      g.gain.setValueAtTime(0.0001,s);
+      g.gain.exponentialRampToValueAtTime(peak,s+0.012);
+      g.gain.exponentialRampToValueAtTime(0.0001,s+dur);
+      o.connect(g); g.connect(c.destination);
+      o.start(s); o.stop(s+dur+0.02);
+    }catch(e){}
+  }
+  function playCorrect(){ tone(523,0,0.10,'square',0.22); tone(659,0.09,0.10,'square',0.22); tone(784,0.18,0.18,'square',0.22); }
+  function playWrong(){ tone(330,0,0.13,'triangle',0.3); tone(247,0.12,0.20,'triangle',0.3); }
+  function playWin(){ tone(659,0,0.10,'square',0.22); tone(784,0.10,0.10,'square',0.22); tone(1047,0.20,0.10,'square',0.22); tone(1319,0.30,0.10,'square',0.22); tone(1047,0.40,0.10,'square',0.22); tone(1319,0.50,0.28,'square',0.24); }
+
   // ---------- Storage ----------
   function save(){ try{ localStorage.setItem(KEY,JSON.stringify({
     tab:idx, sound:soundOn, celeb:celebShown,
     pz:puzzles.map(function(p){return {scr:p.scr,rot:p.rot,taps:p.taps,touched:p.touched,solved:p.solved};})
   })); }catch(e){} }
   function load(){ try{ return JSON.parse(localStorage.getItem(KEY)); }catch(e){ return null; } }
-
-  // ---------- Sound ----------
-  var soundOn=false, audioCtx=null;
-  function beep(correct){
-    if(!soundOn) return;
-    try{
-      audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
-      var o=audioCtx.createOscillator(), g=audioCtx.createGain();
-      o.connect(g); g.connect(audioCtx.destination); o.type='sine';
-      o.frequency.value = correct ? 880 : 200;
-      var t=audioCtx.currentTime;
-      g.gain.setValueAtTime(0.0001,t);
-      g.gain.exponentialRampToValueAtTime(correct?0.16:0.12, t+0.01);
-      g.gain.exponentialRampToValueAtTime(0.0001, t+0.25);
-      o.start(t); o.stop(t+0.26);
-    }catch(e){}
-  }
 
   // ---------- State ----------
   var puzzles=DEFS.map(buildPuzzle);
@@ -364,7 +352,6 @@
   var btnNext=document.getElementById('btnNext');
   var btnHint=document.getElementById('btnHint');
   var btnReset=document.getElementById('btnReset');
-  var btnSteps=document.getElementById('btnSteps');
   var btnSound=document.getElementById('soundBtn');
   var stepsBox=document.getElementById('stepsBox');
 
@@ -377,7 +364,7 @@
 
   function refreshTabs(){
     Array.prototype.forEach.call(elTabs.children,function(b,i){
-      b.textContent='P'+(i+1); // no tick / prefix — color shows done
+      b.textContent='P'+(i+1);                 // no tick — color shows done
       b.className='tab'+(i===idx?' active':'')+(puzzles[i].solved?' done':'');
     });
   }
@@ -400,7 +387,7 @@
       })(i);
     }
     rowNext.classList.toggle('hidden', !(p.solved && idx<puzzles.length-1));
-    stepsBox.classList.add('hidden');
+    stepsBox.classList.toggle('hidden', !p.solved);   // step box auto-shows on solve
     btnSound.textContent = soundOn ? '🔊' : '🔇';
     clearFeedback();
     paint();
@@ -450,13 +437,17 @@
     var p=puzzles[idx];
     p.solved=true;
     paint();
+    stepsBox.classList.remove('hidden');               // auto-show steps
     rowNext.classList.toggle('hidden', idx>=puzzles.length-1);
     refreshTabs();
-    beep(true);
     if(allSolved() && !celebShown){
-      celebShown=true; showFeedback('done','બધી કોયડા પૂર્ણ! 🎉 Well done!'); confetti();
+      celebShown=true;
+      showFeedback('done','બધી કોયડા પૂર્ણ! 🎉 Well done!');
+      if(soundOn) playWin();
+      confetti();
     } else {
       showFeedback('done','🎉 શાબાશ! બધી પાઈપ જોડાઈ ગઈ!');
+      if(soundOn) playCorrect();
     }
     save();
   }
@@ -494,8 +485,6 @@
     showFeedback('ok','નવી ગોઠવણ તૈયાર — ફરી જોડો!');
     save();
   });
-
-  btnSteps.addEventListener('click',function(){ stepsBox.classList.toggle('hidden'); });
 
   btnSound.addEventListener('click',function(){
     soundOn=!soundOn;
